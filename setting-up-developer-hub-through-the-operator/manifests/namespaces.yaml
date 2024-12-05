@@ -1,0 +1,11 @@
+# operator namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rhdh-operator
+---
+# namespace to work in
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: demo-project

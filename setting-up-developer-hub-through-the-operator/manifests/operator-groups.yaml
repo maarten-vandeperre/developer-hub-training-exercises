@@ -1,0 +1,14 @@
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: developer-hub-operator-group
+  namespace: rhdh-operator
+---
+apiVersion: operators.coreos.com/v1
+kind: OperatorGroup
+metadata:
+  name: demo-project-operator-group
+  namespace: demo-project
+spec:
+  targetNamespaces:
+    - demo-project
