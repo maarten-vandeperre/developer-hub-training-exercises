@@ -11,8 +11,7 @@ spec:
       mountPath: /opt/app-root/src
     route: # enable an external route to access Developer Hub
       enabled: true
-      host: ${customHost}
-      subdomain: ${customBaseDomain}
+      # host: maarten-backstage.apps.cluster-tkgmm.tkgmm.sandbox2743.opentlc.com # if you want to enable a custom URL to access developer hub
   database:
     enableLocalDb: true
   extraEnvs:
