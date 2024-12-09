@@ -11,6 +11,8 @@ spec:
       mountPath: /opt/app-root/src
     route: # enable an external route to access Developer Hub
       enabled: true
+      host: ${customHost}
+      subdomain: ${customBaseDomain}
   database:
     enableLocalDb: true
   extraEnvs:
