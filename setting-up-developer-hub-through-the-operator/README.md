@@ -10,10 +10,34 @@ efficiency. You'll also gain practical experience in debugging any potential set
 You can find the exercise description over here (TODO: still needs to be published).
 
 ## Order of executing the yaml manifests
-1. oc apply -f manifests/namespaces.yaml
-2. oc apply -f manifests/operator-groups.yaml
-3. oc apply -f manifests/operator.yaml
-4. oc apply -f manifests/secrets_rdhd-secret.yaml
-5. oc apply -f manifests/pvc_dynamic-plugin-root.yaml
-6. oc apply -f manifests/developer-hub-instance.yaml
+1. ```shell
+   oc apply -f manifests/namespaces.yaml
+   ```
+2. ```shell
+   oc apply -f manifests/operator-groups.yaml
+   ```
+3. ```shell
+   oc apply -f manifests/operator.yaml
+   ```
+4. Wait for the operator to become healthy:
+   Execute the following command and wait until the Developer Hub operator gets status 'Succeeded'
+   _(in the beginning, it can give an empty result)_:
+    ```shell
+    oc get clusterserviceversion -n openshift-operators -o json | jq -r '{Name: .items[].spec.displayName, Status: .items[].status.phase}'
+    ```
+5. ```shell
+   oc apply -f manifests/secrets_rdhd-secret.yaml
+   ```
+6. ```shell
+   oc apply -f manifests/pvc_dynamic-plugin-root.yaml
+   ```
+7. ```shell
+   oc apply -f manifests/developer-hub-instance.yaml
+   ```
+8. Wait for the instance of Developer Hub to become healthy:
+   Execute the following command and wait until the Developer Hub instance gets condition 'Deployed' with status 'True'
+   _(in the beginning, it can give an empty result)_:
+    ```shell
+    oc get backstage -n demo-project -o json | jq -r '{Name: .items[].metadata.name, ConditionType: .items[].status.conditions[].type, ConditionStatus: .items[].status.conditions[].status}'
+    ```
 
