@@ -27,7 +27,11 @@ data:
               webhookSecret: none
               privateKey: ${RHDH_GITHUB_APP_PRIVATE_KEY}
     catalog:
+      ####### start - added to enable software templates
       processingInterval: { minutes: 1 }
+      processing:
+        cache:
+          enabled: false # for development purposes, it is faster to disable the cache. Enable this for more stable environments as staging and production.
       lifecycles:
         - development
         - production
@@ -40,6 +44,7 @@ data:
           target: https://github.com/maarten-vandeperre/developer-hub-training-exercises/blob/main/software-templates/default-quarkus-application/template.yaml
           rules:
             - allow: [Template]
+      ####### end - added to enable software templates
       providers:
         github:
           # the provider ID can be any camelCase string

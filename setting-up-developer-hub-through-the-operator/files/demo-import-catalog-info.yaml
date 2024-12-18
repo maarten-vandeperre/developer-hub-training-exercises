@@ -1,0 +1,8 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "import-demo-app"
+spec:
+  type: service
+  lifecycle: development
+  owner: "group:default/unset-owner"
