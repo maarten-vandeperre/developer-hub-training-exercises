@@ -10,13 +10,16 @@ efficiency. You'll also gain practical experience in debugging any potential set
 You can find the exercise description over here (TODO: still needs to be published).
 
 ## Order of executing the yaml manifests
-1. ```shell
+1. Create namespaces:
+   ```shell
    oc apply -f manifests/namespaces.yaml
    ```
-2. ```shell
+2. Create operator groups:
+   ```shell
    oc apply -f manifests/operator-groups.yaml
    ```
-3. ```shell
+3. Install operator:
+   ```shell
    oc apply -f manifests/operator.yaml
    ```
 4. Wait for the operator to become healthy:
@@ -25,13 +28,16 @@ You can find the exercise description over here (TODO: still needs to be publish
     ```shell
     oc get clusterserviceversion -n openshift-operators -o json | jq -r '{Name: .items[].spec.displayName, Status: .items[].status.phase}'
     ```
-5. ```shell
+5. Create secret with base information:
+   ```shell
    oc apply -f manifests/secrets_rdhd-secret.yaml
    ```
-6. ```shell
+6. Create dynamic plugin root peristent volume to speed up restarts:
+   ```shell
    oc apply -f manifests/pvc_dynamic-plugin-root.yaml
    ```
-7. ```shell
+7. Install Developer Hub Instance:
+   ```shell
    oc apply -f manifests/developer-hub-instance.yaml
    ```
 8. Wait for the instance of Developer Hub to become healthy:
