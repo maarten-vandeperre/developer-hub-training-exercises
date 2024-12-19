@@ -28,7 +28,8 @@ You can find the exercise description over here (TODO: still needs to be publish
     ```shell
     oc get clusterserviceversion -n openshift-operators -o json | jq -r '{Name: .items[].spec.displayName, Status: .items[].status.phase}'
     ```
-5. Create secret with base information:
+5. Create secret with base information:  
+   **!!Important:** make sure that you change the base url to be your domain.
    ```shell
    oc apply -f manifests/secrets_rdhd-secret.yaml
    ```
