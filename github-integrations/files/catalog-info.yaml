@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: "import-demo-app"
+  annotations:
+    github.com/project-slug: maarten-dev-hub-training-organization/import-demo # <organization_name>/<project_name>
+spec:
+  type: service
+  lifecycle: development
+  owner: "group:default/unset-owner"    
