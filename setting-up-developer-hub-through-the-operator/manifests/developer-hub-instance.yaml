@@ -13,7 +13,7 @@ spec:
       # enable an external route to access Developer Hub - will be created by the operator
       enabled: true
       # if you want to enable a custom URL to access developer hub, disable the following line
-      # host: maarten-backstage.apps.cluster-tkgmm.tkgmm.sandbox2743.opentlc.com
+      # host: maarten-backstage.apps.cluster-nqgxv.nqgxv.sandbox1583.opentlc.com
   database:
     enableLocalDb: true
   extraEnvs:
