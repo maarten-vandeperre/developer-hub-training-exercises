@@ -23,6 +23,34 @@ wait_for_condition() {
   done
 }
 
+# Check if the .baseurl file exists
+if [[ ! -f .baseurl ]]; then
+  echo "Error: .baseurl file not found in the current directory."
+  exit 1
+fi
+
+# Read the base URL from the .baseurl file
+BASE_URL=$(cat ../.baseurl)
+
+if [[ -z "$BASE_URL" ]]; then
+  echo "Error: .baseurl file is empty."
+  exit 1
+fi
+
+echo "Base URL: $BASE_URL"
+
+# Find and replace all occurrences of "cluster-<...>.opentlc.com" in files (excluding .baseurl itself)
+find . -type f -not -name ".baseurl" | while read -r file; do
+  if grep -qE "cluster-.*\.opentlc\.com" "$file"; then
+    echo "Updating file: $file"
+    sed -i.bak "s/cluster-.*\.opentlc\.com/$BASE_URL/g" "$file"
+    rm -f "$file.bak"
+  fi
+
+done
+
+echo "Replacement completed."
+
 # Step 1: Create namespaces
 echo "Applying namespaces manifest..."
 oc apply -f manifests/namespaces.yaml
