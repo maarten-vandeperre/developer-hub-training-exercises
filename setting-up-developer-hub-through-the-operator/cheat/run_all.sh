@@ -2,6 +2,44 @@
 
 # Developer Hub Training Exercise - Setting up Developer Hub Through the Operator
 
+# Function to wait for specific condition
+wait_for_pods_restart() {
+  local delay=${1:-10} # Default delay is 10 seconds
+  echo "Waiting for pods to be (re)started..."
+
+  NAMESPACE="demo-project"
+  COMMAND="oc get pods -n $NAMESPACE -o json | jq '.items[] | select(.metadata.ownerReferences[0].name | startswith(\"backstage-developer-hub-\")) | {POD: .metadata.name, DEPLOYMENT: .metadata.ownerReferences[0].name, Status: .status.phase, StartTime: .status.startTime }'"
+
+  # Function to check if there is exactly one running pod
+  check_single_pod_status() {
+      RESULT=$(eval "$COMMAND")
+      echo $RESULT
+      POD_COUNT=$(echo "$RESULT" | jq -r "[. | select(.Status == \"Running\")] | length" ) || POD_COUNT=-1
+      echo $POD_COUNT
+      if [[ "$POD_COUNT" =~ ^[0-9]$ && "$POD_COUNT" -eq 1 ]]; then
+          return 0 # Success: Exactly one running pod
+      else
+          return 1 # Failure: More or less than one running pod
+      fi
+  }
+
+  # Wait for a pod with Status: "Running"
+  echo "Waiting for a pod with {\"Status\": \"Running\"} in namespace $NAMESPACE..."
+  sleep 5 # Wait for new pod to start
+  echo "Waiting for exactly one pod with {\"Status\": \"Running\"} in namespace $NAMESPACE..."
+  while true; do
+      if check_single_pod_status; then
+          echo "Exactly one pod with {\"Status\": \"Running\"} is found!"
+          echo "Details:"
+          echo "$RESULT" | jq '. | select(.Status == "Running")'
+          break
+      else
+          echo "Condition not met yet. Retrying in $delay seconds..."
+          sleep "$delay"
+      fi
+  done
+}
+
 # Function to wait for a specific condition
 wait_for_condition() {
   local command="$1"
@@ -24,8 +62,8 @@ wait_for_condition() {
 }
 
 # Check if the .baseurl file exists
-if [[ ! -f .baseurl ]]; then
-  echo "Error: .baseurl file not found in the current directory."
+if [[ ! -f ../.baseurl ]]; then
+  echo "Error: .baseurl file not found in the current parent directory."
   exit 1
 fi
 
@@ -39,7 +77,7 @@ fi
 
 echo "Base URL: $BASE_URL"
 
-# Find and replace all occurrences of "cluster-nqgxv.nqgxv.sandbox1583.opentlc.com" in files (excluding .baseurl itself)
+# Find and replace all occurrences of "cluster-2pddf.2pddf.sandbox2894.opentlc.com" in files (excluding .baseurl itself)
 find . -type f -not -name ".baseurl" | while read -r file; do
   if grep -qE "cluster-.*\.opentlc\.com" "$file"; then
     echo "Updating file: $file"
@@ -64,6 +102,7 @@ echo "Applying operator manifest..."
 oc apply -f manifests/operator.yaml
 
 # Step 4: Wait for the Developer Hub operator to become healthy
+echo "Wait for the Developer Hub operator to become healthy"
 wait_for_condition "oc get clusterserviceversion -n openshift-operators -o json | jq -r '{Status: .items[].status.phase}'" "Succeeded"
 
 # Step 5: Create secret with base information
@@ -79,6 +118,9 @@ echo "Applying Developer Hub instance manifest..."
 oc apply -f manifests/developer-hub-instance.yaml
 
 # Step 8: Wait for the Developer Hub instance to become healthy
+echo "Wait for the Developer Hub instance to become healthy"
 wait_for_condition "oc get backstage -n demo-project -o json | jq -r '{ConditionType: .items[].status.conditions[].type, ConditionStatus: .items[].status.conditions[].status}'" "Deployed"
 
+echo "Wait for pods to start"
+wait_for_pods_restart
 echo "Developer Hub setup completed successfully."

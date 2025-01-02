@@ -41,7 +41,7 @@ fi
 
 echo "Base URL: $BASE_URL"
 
-# Find and replace all occurrences of "cluster-nqgxv.nqgxv.sandbox1583.opentlc.com" in files (excluding .baseurl itself)
+# Find and replace all occurrences of "cluster-2pddf.2pddf.sandbox2894.opentlc.com" in files (excluding .baseurl itself)
 find . -type f -not -name ".baseurl" | while read -r file; do
   if grep -qE "cluster-.*\.opentlc\.com" "$file"; then
     echo "Updating file: $file"
@@ -54,8 +54,8 @@ done
 echo "Replacement completed."
 
 
-#cd setting-up-developer-hub-through-the-operator
-#sh cheat/run_all.sh
-#cd ..
-#cd github-integrations
-#sh cheat/run_all.sh
+cd setting-up-developer-hub-through-the-operator
+sh cheat/run_all.sh
+cd ..
+cd github-integrations
+sh cheat/run_all.sh

@@ -47,7 +47,7 @@ data:
         github:
           # the provider ID can be any camelCase string
           providerId:
-            organization: 'maarten-dev-hub-training-organization' # the name of the GitHub organization
+            organization: ${RHDH_GITHUB_ORGANIZATION} # the name of the GitHub organization
             catalogPath: '/catalog-info.yaml' # the path where your catalog info file will be placed within projects than need to be scanned
             filters:
               branch: 'master' # string
@@ -60,7 +60,7 @@ data:
               initialDelay: { seconds: 15 }
           # This one is needed for the demo-import repository: default branch on GitHub is 'main' now
           mainBranchProvider: # to enable scanning on the main branch
-            organization: 'maarten-dev-hub-training-organization' # the name of the GitHub organization
+            organization: ${RHDH_GITHUB_ORGANIZATION} # the name of the GitHub organization
             catalogPath: '/catalog-info.yaml' # the path where your catalog info file will be placed within projects than need to be scanned
             filters:
               branch: 'main' # string
@@ -74,7 +74,8 @@ data:
         githubOrg:
           # the provider ID can be any camelCase string
           id: githubborg-maarten-dev-hub-training-organization
-          orgs: [ 'maarten-dev-hub-training-organization' ]
+          orgs: 
+            - ${RHDH_GITHUB_ORGANIZATION}
           githubUrl: https://github.com # 'https://' is required!
           schedule: # optional; same options as in TaskScheduleDefinition
             # supports cron, ISO duration, "human duration" as used in code
