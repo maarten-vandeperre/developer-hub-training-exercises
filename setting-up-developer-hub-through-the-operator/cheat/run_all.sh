@@ -61,6 +61,11 @@ wait_for_condition() {
   done
 }
 
+echo "Replace base domain in the .baseurl config file before proceeding."
+echo "Press Enter to continue..."
+read
+
+
 # Check if the .baseurl file exists
 if [[ ! -f ../.baseurl ]]; then
   echo "Error: .baseurl file not found in the current parent directory."
@@ -77,7 +82,7 @@ fi
 
 echo "Base URL: $BASE_URL"
 
-# Find and replace all occurrences of "cluster-2pddf.2pddf.sandbox2894.opentlc.com" in files (excluding .baseurl itself)
+# Find and replace all occurrences of "cluster-5pq52.5pq52.sandbox502.opentlc.com" in files (excluding .baseurl itself)
 find . -type f -not -name ".baseurl" | while read -r file; do
   if grep -qE "cluster-.*\.opentlc\.com" "$file"; then
     echo "Updating file: $file"
