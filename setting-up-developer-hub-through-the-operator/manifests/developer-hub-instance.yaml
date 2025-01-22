@@ -2,7 +2,7 @@ apiVersion: rhdh.redhat.com/v1alpha1
 kind: Backstage
 metadata:
   name: developer-hub
-  namespace: demo-project #project-namespace
+  namespace: maartens-namespace #project-namespace
 spec:
   application:
     appConfig: # location where the application configuration file can be added in later training exercises
@@ -13,7 +13,7 @@ spec:
       # enable an external route to access Developer Hub - will be created by the operator
       enabled: true
       # if you want to enable a custom URL to access developer hub, disable the following line
-      # host: maarten-backstage.apps.cluster-5pq52.5pq52.sandbox502.opentlc.com
+      # host: maarten-backstage.apps.cluster-b896c.b896c.sandbox101.opentlc.com
   database:
     enableLocalDb: true
   extraEnvs:

@@ -2,12 +2,13 @@
 
 # Developer Hub Training Exercise - Adding GitHub Integration
 
+NAMESPACE=$(cat ../.namespace)
+
 # Function to wait for specific condition
 wait_for_pods_restart() {
   local delay=${1:-10} # Default delay is 10 seconds
   echo "Waiting for pods to be restarted..."
 
-  NAMESPACE="demo-project"
   COMMAND="oc get pods -n $NAMESPACE -o json | jq '.items[] | select(.metadata.ownerReferences[0].name | startswith(\"backstage-developer-hub-\")) | {POD: .metadata.name, DEPLOYMENT: .metadata.ownerReferences[0].name, Status: .status.phase, StartTime: .status.startTime }'"
 
   # Function to check if there is exactly one running pod

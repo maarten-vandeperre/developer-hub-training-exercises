@@ -74,6 +74,7 @@ fi
 
 # Read the base URL from the .baseurl file
 BASE_URL=$(cat ../.baseurl)
+NAMESPACE=$(cat ../.namespace)
 
 if [[ -z "$BASE_URL" ]]; then
   echo "Error: .baseurl file is empty."
@@ -82,8 +83,8 @@ fi
 
 echo "Base URL: $BASE_URL"
 
-# Find and replace all occurrences of "cluster-5pq52.5pq52.sandbox502.opentlc.com" in files (excluding .baseurl itself)
-find . -type f -not -name ".baseurl" | while read -r file; do
+# Find and replace all occurrences of "cluster-b896c.b896c.sandbox101.opentlc.com" in files (excluding .baseurl itself)
+find . -type f -not -name ".baseurl" -not -name "run_all" | while read -r file; do
   if grep -qE "cluster-.*\.opentlc\.com" "$file"; then
     echo "Updating file: $file"
     sed -i.bak "s/cluster-.*\.opentlc\.com/$BASE_URL/g" "$file"
@@ -92,7 +93,26 @@ find . -type f -not -name ".baseurl" | while read -r file; do
 
 done
 
-echo "Replacement completed."
+echo "Replacement of base URL completed."
+
+if [[ -z "$NAMESPACE" ]]; then
+  echo "Error: .namespace file is empty."
+  exit 1
+fi
+
+echo "NAMESPACE: $NAMESPACE"
+
+# Find and replace all occurrences of the default namespace in files (excluding .namespace itself)
+find . -type f -not -name ".namespace" -not -name "run_all.sh" -not -name "cheat_script_run_all.sh" | while read -r file; do
+  if grep -qE ":.* #project-namespace" "$file"; then
+    echo "Updating file: $file"
+    sed -i.bak "s/:.* #project-namespace/: $NAMESPACE #project-namespace/g" "$file"
+    rm -f "$file.bak"
+  fi
+
+done
+
+echo "Replacement of namespace completed."
 
 # Step 1: Create namespaces
 echo "Applying namespaces manifest..."
@@ -124,7 +144,7 @@ oc apply -f manifests/developer-hub-instance.yaml
 
 # Step 8: Wait for the Developer Hub instance to become healthy
 echo "Wait for the Developer Hub instance to become healthy"
-wait_for_condition "oc get backstage -n demo-project -o json | jq -r '{ConditionType: .items[].status.conditions[].type, ConditionStatus: .items[].status.conditions[].status}'" "Deployed"
+wait_for_condition "oc get backstage -n $NAMESPACE -o json | jq -r '{ConditionType: .items[].status.conditions[].type, ConditionStatus: .items[].status.conditions[].status}'" "Deployed"
 
 echo "Wait for pods to start"
 wait_for_pods_restart

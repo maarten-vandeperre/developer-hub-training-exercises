@@ -51,7 +51,29 @@ find . -type f -not -name ".baseurl" | while read -r file; do
 
 done
 
-echo "Replacement completed."
+echo "Replacement of base URL completed."
+
+# Read the namespace from the .namespace file
+NAMESPACE=$(cat .namespace)
+
+if [[ -z "$NAMESPACE" ]]; then
+  echo "Error: .namespace file is empty."
+  exit 1
+fi
+
+echo "Namespace: $NAMESPACE"
+
+# Find and replace all occurrences of the default namespace in files (excluding .namespace itself)
+find . -type f -not -name ".namespace" -not -name "run_all.sh" -not -name "cheat_script_run_all.sh" | while read -r file; do
+  if grep -qE ":.* #project-namespace" "$file"; then
+    echo "Updating file: $file"
+    sed -i.bak "s/:.* #project-namespace/: $NAMESPACE #project-namespace/g" "$file"
+    rm -f "$file.bak"
+  fi
+
+done
+
+echo "Replacement of namespace completed."
 
 
 cd setting-up-developer-hub-through-the-operator
