@@ -2,7 +2,7 @@ apiVersion: rhdh.redhat.com/v1alpha2
 kind: Backstage
 metadata:
   name: developer-hub
-  namespace: demo-project
+  namespace: demo-project #project-namespace
 spec:
   application:
     dynamicPluginsConfigMapName: dynamic-plugins-rhdh

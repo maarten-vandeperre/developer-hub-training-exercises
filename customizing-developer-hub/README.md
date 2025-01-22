@@ -1,12 +1,11 @@
-# Developer Hub Training Exercise - Setting up Developer Hub Through the operator
+# Developer Hub Training Exercise - Customizing Developer Hub
 
-In this learning exercise, we’ll build on a freshly installed Red Hat Developer Hub by adding GitHub integration. 
-This integration will enable project scanning, initiating new projects, and leveraging GitHub Actions to streamline workflows. 
-We'll guide you through the key steps to configure GitHub integration and make the most of these powerful features. 
-By the end of this exercise, you’ll not only have an enhanced Developer Hub, but also practical experience in setting up and utilizing GitHub-based 
-capabilities to boost your development efficiency.
+In this learning exercise, we'll be customizing developer hub (e.g., look-and-feel, URL to access developer hub, learning paths, ...).
 
-https://developers.redhat.com/learn/streamline-development-github-integration-and-software-templates-red-hat-developer-hub?ssd
+You can find the exercise description over here (TODO: still needs to be published).
+
+## Customizing the theme (i.e., the look-and-feel)
+
 
 ## Order of executing the yaml manifests
 1. **!! Important:** Do not forget to change the values to your GitHub app (client) credentials before applying the YAML.

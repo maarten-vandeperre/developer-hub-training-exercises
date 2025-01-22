@@ -7,7 +7,7 @@ the hub, and troubleshooting common issues during setup. By the end of this exer
 fully functional Developer Hub in place, ready to enhance your development workflows and increase 
 efficiency. You'll also gain practical experience in debugging any potential setup challenges.
 
-You can find the exercise description over here (TODO: still needs to be published).
+https://developers.redhat.com/learn/deploying-and-troubleshooting-red-hat-developer-hub-openshift-practical-guide?ssd
 
 ## Order of executing the yaml manifests
 1. Create namespaces:
