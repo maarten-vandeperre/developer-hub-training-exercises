@@ -3,9 +3,9 @@ apiVersion: apps/v1
 metadata:
   annotations:
     meta.helm.sh/release-name: redhat-developer-hub
-    meta.helm.sh/release-namespace: rh-ee-mvandepe-dev
+    meta.helm.sh/release-namespace: demo-project #project-namespace
   name: redhat-developer-hub
-  namespace: rh-ee-mvandepe-dev
+  namespace: demo-project #project-namespace
   labels:
     app.kubernetes.io/component: backstage
     app.kubernetes.io/instance: redhat-developer-hub
@@ -169,27 +169,27 @@ spec:
             - '--config'
             - /opt/app-root/src/app-config-from-configmap.yaml
       volumes:
-          - name: dynamic-plugins-root
-            persistentVolumeClaim:
-              claimName: redhat-developer-hub-dynamic-plugins-root
-          - name: dynamic-plugins
-            configMap:
-              name: redhat-developer-hub-dynamic-plugins
-              defaultMode: 420
-              optional: true
-          - name: dynamic-plugins-npmrc
-            secret:
-              secretName: redhat-developer-hub-dynamic-plugins-npmrc
-              defaultMode: 420
-              optional: true
-          - name: dynamic-plugins-registry-auth
-            secret:
-              secretName: redhat-developer-hub-dynamic-plugins-registry-auth
-              defaultMode: 416
-              optional: true
-          - name: npmcacache
-            emptyDir: { }
-          - name: backstage-app-config
-            configMap:
-              name: redhat-developer-hub-app-config
-              defaultMode: 420
+        - name: dynamic-plugins-root
+          persistentVolumeClaim:
+            claimName: redhat-developer-hub-dynamic-plugins-root
+        - name: dynamic-plugins
+          configMap:
+            name: redhat-developer-hub-dynamic-plugins
+            defaultMode: 420
+            optional: true
+        - name: dynamic-plugins-npmrc
+          secret:
+            secretName: redhat-developer-hub-dynamic-plugins-npmrc
+            defaultMode: 420
+            optional: true
+        - name: dynamic-plugins-registry-auth
+          secret:
+            secretName: redhat-developer-hub-dynamic-plugins-registry-auth
+            defaultMode: 416
+            optional: true
+        - name: npmcacache
+          emptyDir: {}
+        - name: backstage-app-config
+          configMap:
+            name: redhat-developer-hub-app-config
+            defaultMode: 420
