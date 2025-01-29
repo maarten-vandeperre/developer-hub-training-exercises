@@ -8,4 +8,4 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: maartens-namespace #project-namespace
+  name: rh-ee-mvandepe-dev #project-namespace

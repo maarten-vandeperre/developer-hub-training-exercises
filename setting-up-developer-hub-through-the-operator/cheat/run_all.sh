@@ -83,7 +83,7 @@ fi
 
 echo "Base URL: $BASE_URL"
 
-# Find and replace all occurrences of "cluster-b896c.b896c.sandbox101.opentlc.com" in files (excluding .baseurl itself)
+# Find and replace all occurrences of "rm1.0a51.p1.openshiftapps.com" in files (excluding .baseurl itself)
 find . -type f -not -name ".baseurl" -not -name "run_all" | while read -r file; do
   if grep -qE "cluster-.*\.opentlc\.com" "$file"; then
     echo "Updating file: $file"
