@@ -65,7 +65,7 @@ fi
 echo "Namespace: $NAMESPACE"
 
 # Find and replace all occurrences of the default namespace in files (excluding .namespace itself)
-find . -type f -not -name ".namespace" -not -name "run_all.sh" -not -name "cheat_script_run_all.sh" | while read -r file; do
+find . -type f -not -name ".namespace" -not -name "run_all.sh" -not -name "cheat_script_run_all.sh" -not -name "replace_base_url.sh" | while read -r file; do
   if grep -qE ":.* #project-namespace" "$file"; then
     echo "Updating file: $file"
     sed -i.bak "s/:.* #project-namespace/: $NAMESPACE #project-namespace/g" "$file"

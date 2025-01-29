@@ -2,7 +2,7 @@ kind: ConfigMap
 apiVersion: v1
 metadata:
   name: redhat-developer-hub-app-config
-  namespace: rh-ee-mvandepe-dev #project-namespace
+  namespace: demo-project #project-namespace
 data:
   app-config.yaml: |
     ####### start - added to enable github authentication

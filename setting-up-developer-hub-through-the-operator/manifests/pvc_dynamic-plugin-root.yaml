@@ -2,7 +2,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: dynamic-plugins-root # persistent volume to be used in the caching of the dynamic plugin installation
-  namespace: rh-ee-mvandepe-dev #project-namespace
+  namespace: demo-project #project-namespace
 spec:
   accessModes:
     - ReadWriteOnce
