@@ -64,12 +64,16 @@ Then, for Developer Hub 1.4, run:
 npx @backstage/create-app@0.5.17
 ```
 
-When prompted for the name enter "local-backstage".  
+**When prompted for the name enter "local-backstage".**  
 After prompting for a project name the `create-app` command will generate a git repo with the Backstage app and 
 an [initial commit](https://github.com/gashcrumb/dynamic-plugins-getting-started/commit/6409e6e9a411387fc219dde00184e5cfe1dcb994)
 
 `yarn install` is run automatically by the `create-app` script.  
 The generated `package.json` also contains scripts such as `yarn tsc` and `yarn build:all` to build the repo as needed.
+
+> There is an issue with multiple versions of express being dragged in, to resolve this,
+> add the following line to the resolutions section of the root package.json:   
+> "@types/express": "^5.0.0"
 
 #### Bootstrapping Step 2 [optional]
 
@@ -93,6 +97,7 @@ _(Go into the local-backstage folder; i.e., cd local-backstage)_
 Now the backend plugin can be bootstrapped.  Run `yarn new` and select `backend-plugin`.  
 When prompted for a name specify `simple-chat`.  This will generate some example backend plugin code and add this plugin as a dependency to `packages/backend/package.json`.
 
+[optional]  
 The end result of all of this should look similar to 
 [this commit](https://github.com/gashcrumb/dynamic-plugins-getting-started/commit/5d31fc3cb9b4a02e8d6dc51b5589ae95097657db) and the 
 example backend endpoint should be accessible via `curl` when `yarn start` from `plugins/simple-chat-backend`
@@ -115,12 +120,13 @@ Import `ChatIcon` from '@backstage/core-components'
  ChatIcon
 ```
 
+[optional]
 Once completed, the end result should look similar to 
 [this commit](https://github.com/gashcrumb/dynamic-plugins-getting-started/commit/0aa89cdfaae84d42366aca0ac8fa018a187cabba).  
 Do a rebuild with `yarn run tsc && yarn run build:all` and then the generated frontend plugin should be visible in 
 the UI when running `yarn start` from the root of the repo.
 
-### Phase 2 - Plugin Implementation
+### Phase 2 - Plugin Implementation [optional]
 
 At this point it's time to develop the actual plugin functionality.  
 The example app will be a very simple chat application, with the username derived from the logged-in user's identity.  
@@ -262,7 +268,7 @@ export { simpleChatPlugin, SimpleChatPage } from './plugin';
 export const ChatIcon = ChatIconBackstage;
 ```
 
-#### Enablement Step 7
+#### Enablement Step 7 [optional]
 
 Finally, the frontend plugin should include some basic configuration so that it will be visible in the Developer Hub app.  
 The convention currently is to put this into an `app-config.janus-idp.yaml` file.  
@@ -296,7 +302,7 @@ The results of all of these changes along with the additions discussed in the de
 
 Deploying a dynamic plugin to Developer Hub involves exporting a special build of the plugin and packing it into a `.tar.gz` file.  
 Once the dynamic plugins are exported as `.tar.gz` to a directory, that directory will be used to create an image, 
-which will then be served by an `httpd` instance in OCP.  Deployment in Developer Hub is still in a technical preview phase, 
+which will then be served by an `httpd` instance in OCP.  Custom deployment in Developer Hub is still in a technical preview phase, 
 so there's not much tooling to help.  Some scripts mentioned in the last phase have been added 
 to this repo to hopefully make this process straightforward.
 
@@ -320,6 +326,41 @@ Make sure to build everything at this point, often it's easiest to run a chain o
 ```text
 yarn install && yarn run tsc && yarn run build:all && yarn run export-dynamic
 ```
+
+#### Deployment Step 3
+
+
+
+
+
+
+```yaml
+dynamicPlugins:
+  frontend:
+    internal.backstage-plugin-simple-chat:
+      appIcons:
+        - name: chatIcon
+          importName: ChatIcon
+      dynamicRoutes:
+        - path: /simple-chat
+          importName: SimpleChatPage
+          menuItem:
+            text: 'Simple Chat'
+            icon: chatIcon
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 Download script files:
 
