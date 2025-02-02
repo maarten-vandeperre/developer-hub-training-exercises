@@ -1,0 +1,135 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: redhat-developer-hub-app-config
+  namespace: demo-project #project-namespace
+data:
+  app-config.yaml: |
+    ####### start - added to enable github authentication
+    signInPage: github
+    ####### end - added to enable github authentication
+    app:
+      title: My Red Hat Developer Hub Instance
+      baseUrl: ${baseUrl}  # base url is coming from the 'secrets_rdhd-secret.yaml' config in 'setting-up-developer-hub-through-the-operator'
+    backend:
+      auth:
+        keys:
+          - secret: ${BACKEND_SECRET}  # BACKEND_SECRET is coming from the 'secrets_rdhd-secret.yaml' config in 'setting-up-developer-hub-through-the-operator'
+      baseUrl: ${baseUrl}   # base url is coming from the 'secrets_rdhd-secret.yaml' config in 'setting-up-developer-hub-through-the-operator'
+      cors:
+        origin: ${baseUrl}   # base url is coming from the 'secrets_rdhd-secret.yaml' config in 'setting-up-developer-hub-through-the-operator'
+      database:
+        connection:
+          password: ${POSTGRESQL_ADMIN_PASSWORD}
+          user: postgres
+    dynamicPlugins:
+      frontend:
+        internal.backstage-plugin-simple-chat:
+          entityTabs:
+            # Adding a new tab
+            - path: /dynamic-plugin-1
+              title: Dynamic Plugin 1
+              mountPoint: entity.page.dynamic-plugin-1
+          appIcons:
+            - name: chatIcon
+              importName: ChatIcon
+          mountPoints:
+            - mountPoint: entity.page.ci/cards
+              importName: SimpleChatPage
+              config:
+                layout:
+                  gridColumn: '1 / -1'
+            - mountPoint: entity.page.dynamic-plugin-1/cards
+              importName: SimpleChatPage
+              config:
+                layout:
+                  gridColumn: '1 / -1'
+          dynamicRoutes:
+            - path: /simple-chat
+              importName: SimpleChatPage
+              menuItem:
+                text: 'Simple Chat'
+                icon: chatIcon
+    integrations:
+      github:
+        - host: github.com
+          apps:
+            - appId: ${RHDH_GITHUB_APP_ID}
+              clientId: ${RHDH_GITHUB_APP_CLIENT_ID}
+              clientSecret: ${RHDH_GITHUB_APP_CLIENT_SECRET}
+              webhookUrl: none
+              webhookSecret: none
+              privateKey: ${RHDH_GITHUB_APP_PRIVATE_KEY}
+    catalog:
+      processingInterval: { minutes: 1 }
+      processing:
+        cache:
+          enabled: false # for development purposes, it is faster to disable the cache. Enable this for more stable environments as staging and production.
+      lifecycles:
+        - development
+        - production
+        - staging
+      rules:
+        - allow: [Location, Component, API, Resource, System, Domain, Group, User, Template]
+      locations:
+        # a first location: a software template for a basic Quarkus project
+        - type: url
+          target: https://github.com/maarten-vandeperre/developer-hub-training-exercises/blob/main/software-templates/default-quarkus-application/template.yaml
+          rules:
+            - allow: [Template]
+      providers:
+        github:
+          # the provider ID can be any camelCase string
+          providerId:
+            organization: ${RHDH_GITHUB_ORGANIZATION} # the name of the GitHub organization
+            catalogPath: '/catalog-info.yaml' # the path where your catalog info file will be placed within projects than need to be scanned
+            filters:
+              branch: 'master' # string
+              repository: '.*' # Regex
+            schedule: # optional; same options as in TaskScheduleDefinition
+              # supports cron, ISO duration, "human duration" as used in code
+              frequency: { minutes: 1 }
+              # supports ISO duration, "human duration" as used in code
+              timeout: { minutes: 1 }
+              initialDelay: { seconds: 15 }
+          # This one is needed for the demo-import repository: default branch on GitHub is 'main' now
+          mainBranchProvider: # to enable scanning on the main branch
+            organization: ${RHDH_GITHUB_ORGANIZATION} # the name of the GitHub organization
+            catalogPath: '/catalog-info.yaml' # the path where your catalog info file will be placed within projects than need to be scanned
+            filters:
+              branch: 'main' # string
+              repository: '.*' # Regex
+            schedule: # optional; same options as in TaskScheduleDefinition
+              # supports cron, ISO duration, "human duration" as used in code
+              frequency: { minutes: 1 }
+              # supports ISO duration, "human duration" as used in code
+              timeout: { minutes: 1 }
+              initialDelay: { seconds: 15 }
+        ####### start - added to enable github authentication
+        githubOrg:
+          # the provider ID can be any camelCase string
+          id: githubborg-maarten-dev-hub-training-organization
+          orgs:
+            - ${RHDH_GITHUB_ORGANIZATION}
+          githubUrl: https://github.com # 'https://' is required!
+          schedule: # optional; same options as in TaskScheduleDefinition
+            # supports cron, ISO duration, "human duration" as used in code
+            frequency: { minutes: 1 }
+            # supports ISO duration, "human duration" as used in code
+            timeout: { minutes: 1 }
+            initialDelay: { seconds: 15 }
+        ####### end - added to enable github authentication
+    auth:
+      environment: development
+      session:
+        secret: ${BACKEND_SECRET}
+      providers:
+        # allow guest authentication for now
+        guest:
+          dangerouslyAllowOutsideDevelopment: true
+        ####### start - added to enable github authentication
+        github:
+          development:
+            clientId: ${RHDH_GITHUB_APP_CLIENT_ID}
+            clientSecret: ${RHDH_GITHUB_APP_CLIENT_SECRET}
+        ####### end - added to enable github authentication

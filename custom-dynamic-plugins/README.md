@@ -59,6 +59,9 @@ RHDH 1.4 -> Backstage 1.31.3 -> create-app 0.5.17
 Now, create a dir demo-workspace and enter it (i.e., cd demo-workspace).
 
 Then, for Developer Hub 1.4, run:
+_There is an issue with the resulting component. Whenever the command reaches 'yarn install', it will stall.
+You can ctrl+c (i.e., stop) this process now, remove the line '"app": "link:../app"' in 
+local-backstage > backend > package.json_
 
 ```cli
 npx @backstage/create-app@0.5.17
@@ -107,7 +110,10 @@ example backend endpoint should be accessible via `curl` when `yarn start` from 
 The frontend plugin can now be bootstrapped.  Run `yarn new` and select `plugin`.  
 When prompted for a name, specify `simple-chat`  This will generate some starting frontend code and add this plugin as a dependency 
 to `packages/app/package.json`.  The `yarn new` script in this case will also update `packages/app/src/App.tsx` 
-to define a new `Route` component for the new plugin.  However a link to the plugin still needs to be added to the application's 
+to define a new `Route` component for the new plugin.  
+
+[optional]   
+However a link to the plugin still needs to be added to the application's 
 main navigation.  Do this by editing `packages/app/src/components/Root/Root.tsx` and adding a new `SidebarItem` underneath the existing entry for "Create...":
 
 ```typescript
@@ -120,7 +126,7 @@ Import `ChatIcon` from '@backstage/core-components'
  ChatIcon
 ```
 
-[optional]
+[optional]   
 Once completed, the end result should look similar to 
 [this commit](https://github.com/gashcrumb/dynamic-plugins-getting-started/commit/0aa89cdfaae84d42366aca0ac8fa018a187cabba).  
 Do a rebuild with `yarn run tsc && yarn run build:all` and then the generated frontend plugin should be visible in 
@@ -328,11 +334,58 @@ yarn install && yarn run tsc && yarn run build:all && yarn run export-dynamic
 ```
 
 #### Deployment Step 3
+Now we are going to package the plugins, so that we can deploy them to a Developer Hub installation.
+
+Do this for the front-end plugin:   
+_!!! Store the resulting hash value, as you will need it later on_     
+```shell
+npm pack plugins/simple-chat/dist-dynamic --pack-destination ./deploy --json | grep 'integrity'
+```  
+  
+Do this for the backend-end plugin:
+_!!! Store the resulting hash value, as you will need it later on_  
+```shell
+npm pack plugins/simple-chat-backend/dist-dynamic --pack-destination ./deploy --json | grep 'integrity'
+```
+
+#### Deployment Step 4
+Create the plugin repository:  
+_(This step should only be executed once, when you change the plugin, you don't need to execute this command again)._
+```shell
+./oc new-build httpd --name=plugin-registry --binary
+```  
+
+Add the current plugins from the ./deploy folder to the plugin registry:  
+```shell
+./oc start-build plugin-registry --from-dir=./deploy --wait
+```   
+
+Create a new instance of the plugin repository:  
+_(This step should only be executed once, when you change the plugin, you don't need to execute this command again)._
+```shell
+./oc new-app --image-stream=plugin-registry
+```  
 
 
+**In case you just want to update the plugin registry afterward, it is sufficient to only run this command:**  
+```shell
+./oc start-build plugin-registry --from-dir=./deploy --wait
+```  
 
 
-
+#### Deployment Step 5 
+Add the plugins to the dynamic plugin configuration.  
+**!!! Be aware that you need to change the integrity hashes**
+```yaml
+- package: 'http://plugin-registry:8080/internal-backstage-plugin-simple-chat-backend-dynamic-0.1.0.tgz'
+  disabled: false
+  integrity: 'sha512-KFmLwXfft5boOdpGZWTl52uMsEZAXrj3RJbVsjfqRTsGQJg3jDFJeM0y9heuDrHRFM4iFDcrWEWX6ztVOCCZnQ==' #backend-hash
+- package: 'http://plugin-registry:8080/internal-backstage-plugin-simple-chat-dynamic-0.1.0.tgz' 
+  disabled: false
+  integrity: 'sha512-1W56bXXUmiB5q0rO+CX0L6PFVVyqUcV2QqkeQo+ejzDWhrl1DU7fKblA+vpHBz8iNR7K5mq9V7MsmDDpBxT2Eg==' #frontend-hash
+```
+  
+Add the following config to the app-config:  
 
 ```yaml
 dynamicPlugins:
@@ -347,237 +400,4 @@ dynamicPlugins:
           menuItem:
             text: 'Simple Chat'
             icon: chatIcon
-```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Download script files:
-
-```bash
-curl --output 01-stage-dynamic-plugins.sh  https://raw.githubusercontent.com/gashcrumb/dynamic-plugins-getting-started/main/01-stage-dynamic-plugins.sh
-```
-
-```bash
-curl --output 02-create-plugin-registry.sh  https://raw.githubusercontent.com/gashcrumb/dynamic-plugins-getting-started/main/02-create-plugin-registry.sh
-```
-
-```bash
-curl --output 03-update-plugin-registry.sh  https://raw.githubusercontent.com/gashcrumb/dynamic-plugins-getting-started/main/03-update-plugin-registry.sh
-```
-
-And then use the `01-stage-dynamic-plugins.sh` script to pack the plugins into `.tar.gz` files and display their integrity hashes:
-
-```bash
-bash ./01-stage-dynamic-plugins.sh
-```
-
-The output should look kind of like:
-
-```text
-Packaging up plugin static assets
-
-Backend plugin integrity Hash: sha512-mwHcJV0Gx6+GHuvqxpJsw9Gzn/8H5AjoGQ2DlMY4ntntAhdpFr/o5IZO5bOri41R14ocDg3KUqDxaZY/4AWSLg==
-Frontend plugin integrity Hash: sha512-t5HcciQFHsaSjjkiV5Ri1XqAsww9pdJy5zRRrOv8ddGdK1VXGe1ec2+WyDSkguZz1y3UDdaK3mW7asRanWXFOQ==
-
-Plugin .tgz files:
-total 3756
--rw-r--r--. 1 gashcrumb gashcrumb 1575584 Jul  3 14:55 internal-backstage-plugin-simple-chat-backend-dynamic-0.1.0.tgz
--rw-r--r--. 1 gashcrumb gashcrumb 2266355 Jul  3 14:55 internal-backstage-plugin-simple-chat-dynamic-0.1.0.tgz
-```
-
-Make note of or copy the integrity hashes, as these will be needed later when configuring Developer Hub on OpenShift.
-
-#### Deployment Step 3
-
-Now that the files are ready to deploy a new build can be created on OpenShift.  Make sure to use `oc project` to first switch the the same project that Developer Hub is running in.  Use the `02-create-plugin-registry.sh` script to create the build, start it and then start a new app using the built image stream:
-
-```bash
-bash ./02-create-plugin-registry.sh
-```
-
-Once the script is complete, have a look in the OpenShift console Topology view and there should be a new app running called "plugin-registry".
-
-#### Deployment Step 4
-
-Create a custom configuration for Developer Hub called `app-config-rhdh` by creating a new `ConfigMap` with the following contents, however update the `baseUrl` and `origin` settings shown as needed:
-
-> IT IS INCREDIBLY IMPORTANT THAT THE URLS IN THIS CONFIGURATION ARE CORRECT!!!
-
-```yaml
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: app-config-rhdh
-data:
-  app-config-rhdh.yaml: |-
-
-    app:
-      title: Red Hat Developer Hub - Getting Started
-      # Be sure to use the correct url here, the URL given is an example
-      baseUrl: https://backstage-developer-hub-example.apps-crc.testing
-    backend:
-      baseUrl: https://backstage-developer-hub-example.apps-crc.testing
-      cors:
-        origin: https://backstage-developer-hub-example.apps-crc.testing
-
-    auth:
-      environment: development
-      providers:
-        guest:
-          dangerouslyAllowOutsideDevelopment: true
-    dynamicPlugins:
-      frontend:
-        internal.backstage-plugin-simple-chat:
-          appIcons:
-            - name: chatIcon
-              importName: ChatIcon
-          dynamicRoutes:
-            - path: /simple-chat
-              importName: SimpleChatPage
-              menuItem:
-                text: 'Simple Chat'
-                icon: chatIcon
-```
-
-#### Deployment Step 5
-
-Create a custom dynamic plugin configuration for Developer Hub called `dynamic-plugins-rhdh` by creating another `ConfigMap` with the following contents, however be sure to update the integrity hashes to match the ones printed out by the `01-stage-dynamic-plugins.sh` script:
-
-```yaml
-kind: ConfigMap
-apiVersion: v1
-metadata:
-  name: dynamic-plugins-rhdh
-data:
-  dynamic-plugins.yaml: |
-    includes:
-      - dynamic-plugins.default.yaml
-    plugins:
-      - package: 'http://plugin-registry:8080/internal-backstage-plugin-simple-chat-backend-dynamic-0.1.0.tgz'
-        disabled: false
-        integrity: 'sha512-mwHcJV0Gx6+GHuvqxpJsw9Gzn/8H5AjoGQ2DlMY4ntntAhdpFr/o5IZO5bOri41R14ocDg3KUqDxaZY/4AWSLg=='
-      - package: 'http://plugin-registry:8080/internal-backstage-plugin-simple-chat-dynamic-0.1.0.tgz'
-        disabled: false
-        integrity: 'sha512-t5HcciQFHsaSjjkiV5Ri1XqAsww9pdJy5zRRrOv8ddGdK1VXGe1ec2+WyDSkguZz1y3UDdaK3mW7asRanWXFOQ=='
-```
-
-__Watch out for the quotes!__
-
-#### Deployment Step 6
-
-Now update the operator `CustomResource` to load these two ConfigMaps as configuration for DeveloperHub:
-
-```yaml
-spec:
-  application:
-    appConfig:
-      configMaps:
-        - name: app-config-rhdh
-      mountPath: /opt/app-root/src
-    dynamicPluginsConfigMapName: dynamic-plugins-rhdh
-    extraFiles:
-      mountPath: /opt/app-root/src
-    replicas: 1
-    route:
-      enabled: true
-  database:
-    enableLocalDb: true
-```
-
-At this point clicking `Save` should cause the operator to redeploy Developer Hub.  Wait patiently while OpenShift redeploys Developer Hub.
-
-If everything has worked properly the new instance of Developer Hub should contain a "Simple Chat" entry in the sidebar with an icon, clicking on this entry should reveal the chat UI, and it should be possible to send chat messages and view those messages even after a page refresh.
-
-#### Appendix
-
-### Development Loop
-
-If there's a need to rebuild the plugins and redeploy the existing scripts can be used.  The development loop at this point looks like:
-
-Rebuild everything:
-
-```bash
-yarn install && yarn run tsc && yarn run build:all && yarn run export-dynamic
-```
-
-Stage the `.tar.gz` files:
-
-```bash
-bash ./01-stage-dynamic-plugins.sh
-```
-
-Update the image:
-
-```bash
-bash ./03-update-plugin-registry.sh
-```
-
-### Migrate generated app to Yarn v3
-
-Out of the box the `create-app` command sets up a Yarn v1 project, which quickly becomes troublesome as this version is almost unmaintained.  A good option is to migrate the project to Yarn v3 as discussed in the Backstage documentation [here](https://backstage.io/docs/tutorials/yarn-migration/).  This project has been migrated to use Yarn v3 now.
-
-### Using a container image for local development
-
-> Note: While it is possible to run Red Hat Developer Hub outside of Openshift using podman for local development purposes, this method of running Developer Hub is not currently supported for production deployments; only a Red Hat Developer Hub instance installed via the Helm chart or operator is supported for production usage
-
-It's possible to run the RHDH container locally and is handy for developing dynamic plugin.  First extract each .tgz file under the `deploy` directory, each time rename the `package` directory to the plugin name.  Then remove the .tgz files, so the contents of the deploy directory would look like:
-
-```text
-internal-backstage-plugin-simple-chat-backend-dynamic
-internal-backstage-plugin-simple-chat-dynamic
-```
-
-Then use the `appendix-run-container.sh` script to start Developer Hub:
-
-```bash
-bash ./appendix-run-container.sh
-```
-
-The app should be available at http://localhost:7007 and the Simple Chat plugin should be loaded and available on the sidebar after logging in as guest.
-
-### Using rhdh-local
-
-Copy the .tzg files from the `deploy` directory into the `local-plugins` directory of your [rhdh-local](https://github.com/redhat-developer/rhdh-local#test-locally-with-red-hat-developer-hub) clone.
-
-The plugins in this getting started guide were originally built against RHDH 1.2, however they will also work as-is in RHDH 1.3.  Use the following image tag in the `.env` file:
-
-```bash
-RHDH_IMAGE=quay.io/rhdh/rhdh-hub-rhel9:1.3
-```
-
-Configure the plugins to load in `configs/dynamic-plugins.yaml` replacing BACKEND_INTEGRITY and FRONTEND_INTEGRITY with the integrity hash values printed by `01-stage-dynamic-plugins.sh`:
-
-```yaml
-plugins:
-  - package: /opt/app-root/src/local-plugins/internal-backstage-plugin-simple-chat-backend-dynamic-0.1.0.tgz
-    integrity: ${BACKEND_INTEGRITY}
-    disabled: false
-    pluginConfig: {}
-  - package: /opt/app-root/src/local-plugins/internal-backstage-plugin-simple-chat-dynamic-0.1.0.tgz
-    integrity: ${FRONTEND_INTEGRITY}
-    disabled: false
-    pluginConfig:
-      dynamicPlugins:
-        frontend:
-          internal.backstage-plugin-simple-chat:
-            appIcons:
-              - name: chatIcon
-                importName: ChatIcon
-            dynamicRoutes:
-              - path: /simple-chat
-                importName: SimpleChatPage
-                menuItem:
-                  text: 'Simple Chat'
-                  icon: chatIcon      
 ```

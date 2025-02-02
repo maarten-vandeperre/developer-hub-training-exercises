@@ -1,0 +1,32 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: redhat-developer-hub-app-config
+  namespace: demo-project #project-namespace
+data:
+  dynamic-plugins.yaml: |
+    includes:
+      - dynamic-plugins.default.yaml
+    plugins:
+      # to be used for software template creation within GitHub (with default/basic list of scaffolding actions)
+      # to be used for repository scanning within GitHub (i.e., auto import of GitHub repositories in the catalog section of Dev Hub)
+      - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-dynamic
+        disabled: false
+      # enables GitHub actions for the software templates (e.g., publish:github)
+      - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
+        disabled: false
+      
+      ####### start - added to enable github authentication
+      # to be used when you want to use GitHub as a source of users and groups. Users and group will be imported when configured
+      - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-org-dynamic
+        disabled: false
+      ####### end - added to enable github authentication
+
+      - package: 'http://plugin-registry:8080/internal-backstage-plugin-simple-chat-backend-dynamic-0.1.0.tgz'
+        disabled: false
+        integrity: 'sha512-KFmLwXfft5boOdpGZWTl52uMsEZAXrj3RJbVsjfqRTsGQJg3jDFJeM0y9heuDrHRFM4iFDcrWEWX6ztVOCCZnQ==' #backend-hash
+      - package: 'http://plugin-registry:8080/internal-backstage-plugin-simple-chat-dynamic-0.1.0.tgz'
+        disabled: false
+        integrity: 'sha512-1W56bXXUmiB5q0rO+CX0L6PFVVyqUcV2QqkeQo+ejzDWhrl1DU7fKblA+vpHBz8iNR7K5mq9V7MsmDDpBxT2Eg==' #frontend-hash
+
+
