@@ -8,6 +8,11 @@ capabilities to boost your development efficiency.
 
 https://developers.redhat.com/learn/streamline-development-github-integration-and-software-templates-red-hat-developer-hub?ssd
 
+
+_You'll see that some manifest files have the suffix '-helm':
+This means that you have to use these if you installed developer hub
+through helm charts instead of through the operator._
+
 ## Order of executing the yaml manifests
 1. **!! Important:** Do not forget to change the values to your GitHub app (client) credentials before applying the YAML.
    ```shell
