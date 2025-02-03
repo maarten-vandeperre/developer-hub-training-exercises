@@ -356,24 +356,24 @@ npm pack plugins/simple-chat-backend/dist-dynamic --pack-destination ./deploy --
 Create the plugin repository:  
 _(This step should only be executed once, when you change the plugin, you don't need to execute this command again)._
 ```shell
-./oc new-build httpd --name=dev-hub-plugin-registry --binary
+oc new-build httpd --name=dev-hub-plugin-registry --binary
 ```  
 
 Add the current plugins from the ./deploy folder to the plugin registry:  
 ```shell
-./oc start-build dev-hub-plugin-registry --from-dir=./deploy --wait
+oc start-build dev-hub-plugin-registry --from-dir=./deploy --wait
 ```   
 
 Create a new instance of the plugin repository:  
 _(This step should only be executed once, when you change the plugin, you don't need to execute this command again)._
 ```shell
-./oc new-app --image-stream=dev-hub-plugin-registry
+oc new-app --image-stream=dev-hub-plugin-registry
 ```  
 
 
 **In case you just want to update the plugin registry afterward, it is sufficient to only run this command:**  
 ```shell
-./oc start-build dev-hub-plugin-registry --from-dir=./deploy --wait
+oc start-build dev-hub-plugin-registry --from-dir=./deploy --wait
 ```  
 
 
