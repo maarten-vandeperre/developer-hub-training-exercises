@@ -381,10 +381,10 @@ _(This step should only be executed once, when you change the plugin, you don't 
 Add the plugins to the dynamic plugin configuration.  
 **!!! Be aware that you need to change the integrity hashes**
 ```yaml
-- package: 'http://plugin-registry:8080/internal-backstage-plugin-simple-chat-backend-dynamic-0.1.0.tgz'
+- package: 'http://dev-hub-plugin-registry:8080/internal-backstage-plugin-simple-chat-backend-dynamic-0.1.0.tgz'
   disabled: false
   integrity: 'sha512-KFmLwXfft5boOdpGZWTl52uMsEZAXrj3RJbVsjfqRTsGQJg3jDFJeM0y9heuDrHRFM4iFDcrWEWX6ztVOCCZnQ==' #backend-hash
-- package: 'http://plugin-registry:8080/internal-backstage-plugin-simple-chat-dynamic-0.1.0.tgz' 
+- package: 'http://dev-hub-plugin-registry:8080/internal-backstage-plugin-simple-chat-dynamic-0.1.0.tgz' 
   disabled: false
   integrity: 'sha512-1W56bXXUmiB5q0rO+CX0L6PFVVyqUcV2QqkeQo+ejzDWhrl1DU7fKblA+vpHBz8iNR7K5mq9V7MsmDDpBxT2Eg==' #frontend-hash
 ```
