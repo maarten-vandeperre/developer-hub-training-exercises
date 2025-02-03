@@ -62,6 +62,8 @@ Then, for Developer Hub 1.4, run:
 _There is an issue with the resulting component. Whenever the command reaches 'yarn install', it will stall.
 You can ctrl+c (i.e., stop) this process now, remove the line '"app": "link:../app"' in 
 local-backstage > backend > package.json_
+  
+**It can be more convenient to run this from a new directory, specific for plugin development.**
 
 ```cli
 npx @backstage/create-app@0.5.17
@@ -245,21 +247,23 @@ dist-dynamic
 
 #### Enablement Step 5
 
-The backend as generated needs a couple tweaks to work as a dynamic plugin, 
+~~The backend as generated needs a couple tweaks to work as a dynamic plugin, 
 as the generated code relies on a component imported from `@backstage/backend-defaults`.  
-Update `plugins/simple-chat-backend/src/service/router.ts` to remove this import:
+Update `plugins/simple-chat-backend/src/service/router.ts` to remove this import:~~
 
 ```typescript
 import { MiddlewareFactory } from '@backstage/backend-defaults/rootHttpRouter';
 ```
 
-and add this import instead:
+~~and add this import instead:~~
 
 ```typescript
 import { MiddlewareFactory } from '@backstage/backend-app-api';
 ```
 
-These correspond to the versions of the packages released with Backstage 1.26.5.
+~~These correspond to the versions of the packages released with Backstage 1.26.5.~~
+
+**This is not needed anymore in the current version.**
 
 #### Enablement Step 6
 

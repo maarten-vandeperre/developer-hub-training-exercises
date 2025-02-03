@@ -1,0 +1,23 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: redhat-developer-hub-dynamic-plugins
+  namespace: demo-project #project-namespace
+data:
+  dynamic-plugins.yaml: |
+    includes:
+      - dynamic-plugins.default.yaml
+    plugins:
+      # to be used for software template creation within GitHub (with default/basic list of scaffolding actions)
+      # to be used for repository scanning within GitHub (i.e., auto import of GitHub repositories in the catalog section of Dev Hub)
+      - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-dynamic
+        disabled: false
+      # enables GitHub actions for the software templates (e.g., publish:github)
+      - package: ./dynamic-plugins/dist/backstage-plugin-scaffolder-backend-module-github-dynamic
+        disabled: false
+        
+      ####### start - added to enable github authentication
+      # to be used when you want to use GitHub as a source of users and groups. Users and group will be imported when configured
+      - package: ./dynamic-plugins/dist/backstage-plugin-catalog-backend-module-github-org-dynamic 
+        disabled: false
+      ####### end - added to enable github authentication
