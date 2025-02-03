@@ -390,6 +390,7 @@ Add the plugins to the dynamic plugin configuration.
 ```
   
 Add the following config to the app-config:  
+_It needs to be put at the same yaml level (i.e., indentation) as e.g., app, backend, integrations)._
 
 ```yaml
 dynamicPlugins:
