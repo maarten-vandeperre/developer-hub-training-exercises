@@ -1,7 +1,7 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: app-config-rhdh
+  name: redhat-developer-hub-app-config
   namespace: demo-project #project-namespace
 data:
   app-config-rhdh.yaml: |
