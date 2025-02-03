@@ -21,6 +21,7 @@ data:
     integrations:
       github:
         - host: github.com
+          #token: <github personal access token>
           apps:
             - appId: ${RHDH_GITHUB_APP_ID}
               clientId: ${RHDH_GITHUB_APP_CLIENT_ID}
