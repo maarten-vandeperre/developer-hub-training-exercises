@@ -4,7 +4,7 @@ metadata:
   name: redhat-developer-hub-app-config
   namespace: demo-project #project-namespace
 data:
-  app-config-rhdh.yaml: |
+  app-config.yaml: |
     signInPage: github
     app:
       title: My Red Hat Developer Hub Instance
