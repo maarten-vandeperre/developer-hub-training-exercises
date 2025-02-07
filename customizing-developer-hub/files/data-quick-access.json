@@ -1,16 +1,5 @@
 [
   {
-    "title": "Developer Tools - Updated",
-    "isExpanded": true,
-    "links": [
-      {
-        "iconUrl": "/homepage/icons/podman_logo.svg",
-        "label": "Podman Desktop",
-        "url": "https://podman-desktop.io"
-      }
-    ]
-  },
-  {
     "title": "CI/CD Tools",
     "isExpanded": true,
     "links": [
@@ -28,42 +17,6 @@
         "iconUrl": "/homepage/icons/quay.svg",
         "label": "Quay.io",
         "url": "https://quay.io/"
-      }
-    ]
-  },
-  {
-    "title": "OpenShift Clusters",
-    "isExpanded": true,
-    "links": [
-      {
-        "iconUrl": "/homepage/icons/icons8/openshift.png",
-        "label": "OpenShift",
-        "url": "https://docs.openshift.com/"
-      }
-    ]
-  },
-  {
-    "title": "Monitoring Tools",
-    "links": [
-      {
-        "iconUrl": "/homepage/icons/icons8/system-task.png",
-        "label": "Grafana",
-        "url": "https://grafana.com/"
-      }
-    ]
-  },
-  {
-    "title": "Security Tools",
-    "links": [
-      {
-        "iconUrl": "/homepage/icons/icons8/security-checked.png",
-        "label": "GitHub Security",
-        "url": "https://docs.github.com/en/code-security"
-      },
-      {
-        "iconUrl": "/homepage/icons/keycloak.svg",
-        "label": "Keycloak",
-        "url": "https://www.keycloak.org/"
       }
     ]
   }
