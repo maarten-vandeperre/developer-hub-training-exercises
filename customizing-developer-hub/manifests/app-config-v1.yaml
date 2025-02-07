@@ -122,8 +122,8 @@ data:
     #      target: <DOMAIN_URL> # i.e https://raw.githubusercontent.com/
           pathRewrite:
     #        '^/api/proxy/developer-hub': <path to json file> # i.e /janus-idp/backstage-showcase/main/packages/app/public/homepage/data.json
-            '^/api/proxy/developer-hub': /maarten-vandeperre/developer-hub-training-exercises/main/customizing-developer-hub/files/data-quick-access.json
             '^/api/proxy/developer-hub/learning-path': /maarten-vandeperre/developer-hub-training-exercises/main/customizing-developer-hub/files/data-learning-paths.json
+            '^/api/proxy/developer-hub': /maarten-vandeperre/developer-hub-training-exercises/main/customizing-developer-hub/files/data-quick-access.json
           changeOrigin: true
           secure: false
           # Change to "false" in case of using self hosted cluster with a self-signed certificate
