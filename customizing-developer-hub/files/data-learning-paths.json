@@ -3,7 +3,7 @@
     "paths": 6,
     "minutes": 20,
     "description": "Learn about k8s API fundamentals and the etcd operator, as well as how to use the Operator SDK with Go and Helm, review Ansible basics, and use Ansible to deploy Kubernetes modules.",
-    "label": "Building Operators on OpenShift",
+    "label": "Updated: Building Operators on OpenShift",
     "url": "https://developers.redhat.com/learn/openshift/operators"
   },
   {
